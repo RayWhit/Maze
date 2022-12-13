@@ -5,22 +5,21 @@
 #include "Cell.h"
 #include "Maze.h"
 
-class Maze3D : Maze {
+
+class Maze4D : Maze {
 protected:
-	std::vector<std::vector<std::vector<Cell>>> maze;
+	std::vector<std::vector<std::vector<std::vector<Cell>>>> maze;
 
 	sf::RenderWindow window;
 
 public:
-	Maze3D(int size);
+	Maze4D(int mazeSize);
 	void run();
 	void init();
 	void drawMaze();
 	void drawStartFinish();
 	void drawPlayer();
 	void drawStats();
-	~Maze3D();
-
 
 };
 

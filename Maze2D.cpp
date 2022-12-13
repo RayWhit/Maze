@@ -41,7 +41,14 @@ void Maze2D::run() {
                 window.close();
                 break;
 
+            case sf::Event::KeyPressed:
+                if (e.key.code == sf::Keyboard::Escape)
+                    window.close();
+                break;
+
             case sf::Event::TextEntered:
+
+                // player movement
                 if (maze[playerPosition[0]][playerPosition[1]].n && (char)e.text.unicode == 'w') {
                     this->playerPosition[1]--;
                 }
@@ -54,13 +61,12 @@ void Maze2D::run() {
                 else if (maze[playerPosition[0]][playerPosition[1]].e && (char)e.text.unicode == 'd') {
                     this->playerPosition[0]++;
                 }
+
+                // misc buttons
+                
                 break;
             }
         }
-
-       
-
-        //std::cout << playerPosition.first << playerPosition.second << std::endl;
 
         this->window.clear(sf::Color::White);
         drawMaze();
@@ -77,10 +83,23 @@ void Maze2D::init() {
     // generate maze randomly
 
     srand(time(NULL));
-
+    this->playerPosition.assign(2, 0);
     std::stack<std::pair<int, int>> stack;
-    stack.push(std::make_pair(0, 0));
-    this->maze[0][0].visited = true;
+
+    // difficulty A
+    //stack.push(std::make_pair(0, 0));
+    //this->maze[0][0].visited = true;
+
+    // difficulty B
+    //stack.push(std::make_pair(this->mazeSize - 1, this->mazeSize - 1));
+    //this->maze[this->mazeSize - 1][this->mazeSize - 1].visited = true;
+
+    // difficulty C
+    int randX = rand() % mazeSize;
+    int randY = rand() % mazeSize;
+
+    stack.push(std::make_pair(randX, randY));
+    this->maze[randX][randY].visited = true;
 
     int visited = 1;
    
@@ -92,25 +111,25 @@ void Maze2D::init() {
 
         // looking for legable directions
 
-        if (!(cellCordX == 0)) {
+        if (cellCordX != 0) {
             if (!this->maze[cellCordX - 1][cellCordY].visited) {
                 s += 'w';
             }
         }
 
-        if (!(cellCordX == this->mazeSize - 1)) {
+        if (cellCordX != this->mazeSize - 1) {
             if (!this->maze[cellCordX + 1][cellCordY].visited) {
                 s += 'e';
             }
         }
 
-        if (!(cellCordY == 0)) {
+        if (cellCordY != 0) {
             if (!this->maze[cellCordX][cellCordY - 1].visited) {
                 s += 'n';
             }
         }
 
-        if (!(cellCordY == this->mazeSize - 1)) {
+        if (cellCordY != this->mazeSize - 1) {
             if (!this->maze[cellCordX][cellCordY + 1].visited) {
                 s += 's';
             }
@@ -207,7 +226,6 @@ void Maze2D::drawMaze() {
                 wall.setPosition(cell.getPosition().x + this->cellSize, cell.getPosition().y);
                 this->window.draw(wall);
             }
-            //std::cout << x << " " << y << " East: " << maze[x][y].e << " South: " << maze[x][y].s << std::endl;
         }
     }
 
@@ -294,40 +312,6 @@ void Maze2D::drawStats() {
     }
     window.draw(text);
 
-    /*
-    // z w cords
-    text.setString("Z");
-    text.setFillColor(sf::Color::Blue);
-    text.setPosition(this->mazeSize * (this->cellSize + this->wallSize) + 10*this->rightMargin / 20, 0);
-    window2D.draw(text);
-
-    text.setString(std::to_string(playerPosition.second));
-    if (playerPosition.second < 10) {
-        text.setPosition(this->mazeSize * (this->cellSize + this->wallSize) + 10*this->rightMargin / 20, text.getCharacterSize());
-    }
-    else {
-        text.setPosition(this->mazeSize * (this->cellSize + this->wallSize) + 10*this->rightMargin / 20 - text.getCharacterSize() / 4, text.getCharacterSize());
-    }
-    window2D.draw(text);
-
-
-    text.setString("W");
-    text.setFillColor(sf::Color::Cyan);
-    text.setPosition(this->mazeSize * (this->cellSize + this->wallSize) + 14*this->rightMargin / 20, 0);
-    window2D.draw(text);
-
-    text.setString(std::to_string(playerPosition.second));
-    if (playerPosition.second < 10) {
-        text.setPosition(this->mazeSize * (this->cellSize + this->wallSize) + 14*this->rightMargin / 20, text.getCharacterSize());
-    }
-    else {
-        text.setPosition(this->mazeSize * (this->cellSize + this->wallSize) + 14*this->rightMargin / 20 - text.getCharacterSize() / 5, text.getCharacterSize());
-    }
-    window2D.draw(text);
-
-    */
-
-
     // win screen
     if (playerPosition[0] == mazeSize - 1 && playerPosition[1] == mazeSize - 1) {
         text.setFillColor(sf::Color::Red);
@@ -336,8 +320,6 @@ void Maze2D::drawStats() {
         text.setString("You Win!");
         window.draw(text);
     }
-
-
 }
 
 Maze2D::~Maze2D() {

@@ -10,10 +10,6 @@ int main() {
 
     Maze maze(3);
     maze.run();
-
-    //Maze2D maze2D(5);
-    //maze2D.run();
-
   
     return 0;
 }

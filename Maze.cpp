@@ -1,6 +1,7 @@
 #include "Maze.h"
 #include "Maze2D.h"
 #include "Maze3D.h"
+#include "Maze4D.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/System/String.hpp>
@@ -85,6 +86,12 @@ void Maze::run() {
                     this->window.close();
                     Maze3D maze3D(this->mazeSize);
                     maze3D.run();
+                    this->window.create(sf::VideoMode(1080, 720, sf::VideoMode::getDesktopMode().bitsPerPixel * 10), "2D Maze", sf::Style::Close);
+                }
+                else if ((char)e.text.unicode == '4') {
+                    this->window.close();
+                    Maze4D maze4D(this->mazeSize);
+                    maze4D.run();
                     this->window.create(sf::VideoMode(1080, 720, sf::VideoMode::getDesktopMode().bitsPerPixel * 10), "2D Maze", sf::Style::Close);
                 }
 
