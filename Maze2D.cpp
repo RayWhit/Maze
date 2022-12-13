@@ -7,16 +7,11 @@
 
 
 Maze2D::Maze2D(int mazeSize)  : Maze(mazeSize) {
-    /*this->mazeSize = mazeSize;
-    this->cellSize = 750 / this->mazeSize;
-    this->wallSize = this->cellSize * 0.02 + 1;
-    this->playerPosition = std::make_pair(4, 4);
-    this->rightMargin = 200;
-    this->bottomMargin = 50;*/
-
     this->mazeDimension = 2;
     playerPosition.assign(this->mazeDimension, 0);
-    std::vector<std::vector<Cell>> maze(this->mazeSize, std::vector<Cell>(this->mazeSize, Cell()));
+
+    // create 2d vector maze
+    std::vector<std::vector<Cell>> maze(this->mazeSize, std::vector<Cell>(this->mazeSize));
     this->maze = maze;
 }
 
@@ -26,14 +21,12 @@ void Maze2D::run() {
     int windowWidth = this->mazeSize * (this->cellSize + this->wallSize) + this->wallSize + this->rightMargin;
     int windowHeight = this->mazeSize * (this->cellSize + this->wallSize) + this->wallSize + this->bottomMargin;
     
-
     this->window.create(sf::VideoMode(windowWidth, windowHeight, sf::VideoMode::getDesktopMode().bitsPerPixel*10), "2D Maze", sf::Style::Close);
     this->window.clear(sf::Color::White);
 
     init();
 
     while (window.isOpen()) {
-
         sf::Event e;
         while (window.pollEvent(e)) {
             switch (e.type) {
@@ -47,8 +40,8 @@ void Maze2D::run() {
                 break;
 
             case sf::Event::TextEntered:
-
                 // player movement
+
                 if (maze[playerPosition[0]][playerPosition[1]].n && (char)e.text.unicode == 'w') {
                     this->playerPosition[1]--;
                 }
@@ -61,9 +54,6 @@ void Maze2D::run() {
                 else if (maze[playerPosition[0]][playerPosition[1]].e && (char)e.text.unicode == 'd') {
                     this->playerPosition[0]++;
                 }
-
-                // misc buttons
-                
                 break;
             }
         }
@@ -77,8 +67,6 @@ void Maze2D::run() {
     }
 }
 
-
-
 void Maze2D::init() {
     // generate maze randomly
 
@@ -86,24 +74,22 @@ void Maze2D::init() {
     this->playerPosition.assign(2, 0);
     std::stack<std::pair<int, int>> stack;
 
-    // difficulty A
+    // difficulty A - start is the starting point for maze generation
     //stack.push(std::make_pair(0, 0));
     //this->maze[0][0].visited = true;
 
-    // difficulty B
+    // difficulty B - finish is the starting point for maze generation
     //stack.push(std::make_pair(this->mazeSize - 1, this->mazeSize - 1));
     //this->maze[this->mazeSize - 1][this->mazeSize - 1].visited = true;
 
-    // difficulty C
+    // difficulty C - random point in maze is the starting point for maze generation
     int randX = rand() % mazeSize;
     int randY = rand() % mazeSize;
 
     stack.push(std::make_pair(randX, randY));
     this->maze[randX][randY].visited = true;
-
     int visited = 1;
    
-
     while(visited != this->mazeSize * this->mazeSize) {
         std::string s;
         int cellCordX = stack.top().first;
@@ -116,7 +102,6 @@ void Maze2D::init() {
                 s += 'w';
             }
         }
-
         if (cellCordX != this->mazeSize - 1) {
             if (!this->maze[cellCordX + 1][cellCordY].visited) {
                 s += 'e';
@@ -128,7 +113,6 @@ void Maze2D::init() {
                 s += 'n';
             }
         }
-
         if (cellCordY != this->mazeSize - 1) {
             if (!this->maze[cellCordX][cellCordY + 1].visited) {
                 s += 's';
@@ -137,11 +121,12 @@ void Maze2D::init() {
 
         // setting cells up
         if (s.size() < 1) {
+            // if no direction is available pop back to previous position
             stack.pop();
         }
         else {
+            // randomizing maze generation
             int r = rand() % s.size();
-            //std::cout << s[r];
 
             switch (s[r]) {
             case 'n':
@@ -182,27 +167,29 @@ void Maze2D::init() {
 
 void Maze2D::drawMaze() {
     // draw full maze
+    // only top and left outer walls are generated
+    // while printing cells only right and bottom walls are generated
 
     int mazeWidth = this->cellSize * this->mazeSize + this->wallSize * this->mazeSize + this->wallSize;
     
     // east west outer walls
-    sf::RectangleShape wall1(sf::Vector2f(this->wallSize, this->cellSize * this->mazeSize + this->wallSize * this->mazeSize + this->wallSize));
-    wall1.setFillColor(sf::Color::Black);
-    wall1.setPosition(0, 0);
-    this->window.draw(wall1);
-    wall1.setPosition(this->mazeSize * this->cellSize + this->mazeSize * this->wallSize, 0);
-    this->window.draw(wall1);
+    sf::RectangleShape wall(sf::Vector2f(this->wallSize, this->cellSize * this->mazeSize + this->wallSize * this->mazeSize + this->wallSize));
+    wall.setFillColor(sf::Color::Black);
+    wall.setPosition(0, 0);
+    this->window.draw(wall);
+    wall.setPosition(this->mazeSize * this->cellSize + this->mazeSize * this->wallSize, 0);
+    this->window.draw(wall);
 
     // north south outer walls
-    sf::RectangleShape wall2(sf::Vector2f(this->cellSize * this->mazeSize + this->wallSize * this->mazeSize + this->wallSize, this->wallSize));
-    wall2.setFillColor(sf::Color::Black);
-    wall2.setPosition(0, 0);
-    this->window.draw(wall2);
-    wall2.setPosition(0, this->mazeSize * this->cellSize + this->mazeSize * this->wallSize);
-    this->window.draw(wall2);
+    wall.setSize(sf::Vector2f(this->cellSize * this->mazeSize + this->wallSize * this->mazeSize + this->wallSize, this->wallSize));
+    wall.setFillColor(sf::Color::Black);
+    wall.setPosition(0, 0);
+    this->window.draw(wall);
+    wall.setPosition(0, this->mazeSize * this->cellSize + this->mazeSize * this->wallSize);
+    this->window.draw(wall);
 
     
-    // draw maze
+    // draw maze cell by cell
     sf::RectangleShape cell(sf::Vector2f(this->cellSize, this->cellSize));
     cell.setFillColor(sf::Color::White);
 
@@ -229,18 +216,19 @@ void Maze2D::drawMaze() {
         }
     }
 
+    // draw axes
     // XY
     // X
-    wall1.setSize(sf::Vector2f(this->cellSize / 2, 2 * this->wallSize));
-    wall1.setFillColor(sf::Color::Red);
-    wall1.setPosition(cellSize / 8, mazeWidth - cellSize / 8);
-    this->window.draw(wall1);
+    wall.setSize(sf::Vector2f(this->cellSize / 2, 2 * this->wallSize));
+    wall.setFillColor(sf::Color::Red);
+    wall.setPosition(cellSize / 8, mazeWidth - cellSize / 8);
+    this->window.draw(wall);
 
     // Y
-    wall1.setSize(sf::Vector2f(2 * this->wallSize, this->cellSize / 2));
-    wall1.setFillColor(sf::Color::Green);
-    wall1.setPosition(cellSize / 8, mazeWidth - cellSize / 8 - this->cellSize / 2);
-    this->window.draw(wall1);
+    wall.setSize(sf::Vector2f(2 * this->wallSize, this->cellSize / 2));
+    wall.setFillColor(sf::Color::Green);
+    wall.setPosition(cellSize / 8, mazeWidth - cellSize / 8 - this->cellSize / 2);
+    this->window.draw(wall);
 }
 
 void Maze2D::drawStartFinish() {
@@ -271,12 +259,11 @@ void Maze2D::drawPlayer() {
 }
 
 void Maze2D::drawStats() {
-    // draw stats and text to console
+    // draw stats - player position
 
     sf::Font font;
     font.loadFromFile("ARIAL.TTF");
-    if (!font.loadFromFile("ARIAL.TTF"))
-    {
+    if (!font.loadFromFile("ARIAL.TTF")){
         std::cout << "Font loading error";
     }
 
@@ -296,7 +283,6 @@ void Maze2D::drawStats() {
     }
     window.draw(text);
     
-
     // y cord
     text.setString("Y");
     text.setFillColor(sf::Color::Green);
@@ -320,8 +306,4 @@ void Maze2D::drawStats() {
         text.setString("You Win!");
         window.draw(text);
     }
-}
-
-Maze2D::~Maze2D() {
-
 }

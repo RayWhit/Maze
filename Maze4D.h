@@ -20,6 +20,5 @@ public:
 	void drawStartFinish();
 	void drawPlayer();
 	void drawStats();
-
 };
 

@@ -11,13 +11,6 @@ class Maze2D : public Maze
 {
 protected:
 	std::vector<std::vector<Cell>> maze;
-	/*int cellSize;
-	int wallSize;
-	int mazeSize;
-	int rightMargin;
-	int bottomMargin;
-	std::pair<int, int> playerPosition;*/
-
 	sf::RenderWindow window;
 
 public:
@@ -28,6 +21,5 @@ public:
 	void drawStartFinish();
 	void drawPlayer();
 	void drawStats();
-	~Maze2D();
 };
 

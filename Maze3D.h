@@ -19,8 +19,5 @@ public:
 	void drawStartFinish();
 	void drawPlayer();
 	void drawStats();
-	~Maze3D();
-
-
 };
 

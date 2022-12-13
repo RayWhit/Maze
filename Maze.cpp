@@ -24,7 +24,7 @@ Maze::Maze(int mazeSize) {
 }
 
 void Maze::run() {
-    this->window.create(sf::VideoMode(1080, 720, sf::VideoMode::getDesktopMode().bitsPerPixel * 10), "2D Maze", sf::Style::Close);
+    this->window.create(sf::VideoMode(1080, 720, sf::VideoMode::getDesktopMode().bitsPerPixel * 10), "Maze", sf::Style::Close);
     this->window.clear(sf::Color::White);
 
     // text creation
@@ -43,9 +43,7 @@ void Maze::run() {
         /*"\n\n\n\n\n"
         "Set the maze up:   Dimensions      Size\n\n"
         "\t\t\t\t\t\t\t\t\t\t+  \t           +"
-    
         */
-    
     );
 
     text.setPosition(0, 0);

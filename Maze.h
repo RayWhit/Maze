@@ -24,11 +24,6 @@ protected:
 public:
 	Maze(int mazeSize);
 	void run();
-	/*void init();
-	void drawMaze();
-	void drawStartFinish();
-	void drawPlayer();
-	void drawStats();*/
 	~Maze();
 };
 
